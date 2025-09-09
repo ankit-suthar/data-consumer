@@ -5,6 +5,7 @@ import com.common.models.util.PhoneRecordMapper;
 import com.data.consumer.repository.PhoneRecordAuditRepoCassandra;
 import com.data.consumer.repository.PhoneRecordCassandraRepo;
 import com.data.consumer.repository.PhoneRecordElasticRepo;
+import com.data.consumer.repository.PhoneRecordPostgresRepo;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -27,6 +28,9 @@ public class PhoneRecordConsumer {
 
     @Autowired
     private PhoneRecordAuditRepoCassandra auditRepoCassandra;
+
+    @Autowired
+    private PhoneRecordPostgresRepo postgresRepo;
 
     private static final Logger log = LoggerFactory.getLogger(PhoneRecordConsumer.class);
 
@@ -62,8 +66,8 @@ public class PhoneRecordConsumer {
 
             JsonNode inputData = new ObjectMapper().valueToTree(data);
 
-            // Save in Cassandra
-            cassandraRepo.save(PhoneRecordMapper.toCassandra(data));
+            // Save in Postgres
+            postgresRepo.save(PhoneRecordMapper.toPostgres(data));
             // Save in Cassandra for Audit
             auditRepoCassandra.save(PhoneRecordMapper.toCassandraAudit(data));
             // Index in Elasticsearch
@@ -84,8 +88,8 @@ public class PhoneRecordConsumer {
             data.put("country", node.get("country").asText());
             data.put("state", node.get("state").asText());
             data.put("type", node.get("type").asText());
-            data.put("status", PhoneNumberStatus.AVAILABLE.toValue());
-            data.put("version", "1");
+            data.put("status", node.get("status").asText());
+            data.put("version", node.get("version").asText());
             data.put("eventTime", Long.toString(System.currentTimeMillis()));
             data.put("correlationId", node.get("correlationId").asText());
             data.put("userId", node.get("userId").asText());
