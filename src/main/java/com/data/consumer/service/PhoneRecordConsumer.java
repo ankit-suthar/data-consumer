@@ -2,6 +2,7 @@ package com.data.consumer.service;
 
 import com.common.models.enums.PhoneNumberStatus;
 import com.common.models.util.PhoneRecordMapper;
+import com.data.consumer.repository.CustomerRecordAuditRepoCassandra;
 import com.data.consumer.repository.PhoneRecordAuditRepoCassandra;
 import com.data.consumer.repository.PhoneRecordCassandraRepo;
 import com.data.consumer.repository.PhoneRecordElasticRepo;
@@ -31,6 +32,9 @@ public class PhoneRecordConsumer {
 
     @Autowired
     private PhoneRecordPostgresRepo postgresRepo;
+
+    @Autowired
+    private CustomerRecordAuditRepoCassandra customerAuditRepo;
 
     private static final Logger log = LoggerFactory.getLogger(PhoneRecordConsumer.class);
 
@@ -96,8 +100,12 @@ public class PhoneRecordConsumer {
 
             // Save in Cassandra for Audit
             auditRepoCassandra.save(PhoneRecordMapper.toCassandraAudit(data));
-            JsonNode inputData = new ObjectMapper().valueToTree(data);
+
+            // Save in Cassandra for customer audit
+            customerAuditRepo.save(PhoneRecordMapper.toCustomerAudit(data));
+
             // Index in Elasticsearch
+            JsonNode inputData = new ObjectMapper().valueToTree(data);
             elasticRepo.save(PhoneRecordMapper.toElastic(inputData));
 
             log.info("Stored phone number update: {}", node);
