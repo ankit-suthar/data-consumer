@@ -49,7 +49,7 @@ It ensures records are validated, deduplicated, and consistently stored across m
 }
 
 Transformed & Stored:
-```json
+
 {
   "e164Number": "+917980883532",
   "country": "IN",
@@ -60,8 +60,8 @@ Transformed & Stored:
   "eventTime": 1757393437690
 }
 
-**Incoming (`post-processing`):**
-```json
+Incoming (post-processing):
+
 {
   "e164Number": "+917980883532",
   "country": "IN",
