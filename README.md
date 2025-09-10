@@ -49,7 +49,7 @@ It ensures records are validated, deduplicated, and consistently stored across m
 }
 
 Transformed & Stored:
-
+```json
 {
   "e164Number": "+917980883532",
   "country": "IN",
@@ -61,7 +61,7 @@ Transformed & Stored:
 }
 
 **Incoming (`post-processing`):**
-``json
+```json
 {
   "e164Number": "+917980883532",
   "country": "IN",
